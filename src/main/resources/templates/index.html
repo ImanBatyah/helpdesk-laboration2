@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="sv" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helpdesk – Startsida</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f6fb;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #164a78;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 35px;
+            background-color: white;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #164a78;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #164a78;
+            color: white;
+            padding: 12px 25px;
+            margin-top: 20px;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Helpdesk</h1>
+        <p>Digitalt system för supportärenden</p>
+    </header>
+
+    <main>
+        <h2>Välkommen till Helpdesk!</h2>
+        <p>Här kan du skapa, följa upp och hantera supportärenden.</p>
+        <a class="button" th:href="@{/login}">Logga in</a>
+    </main>
+</body>
+</html>

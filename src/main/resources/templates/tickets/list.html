@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+<html lang="sv" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supportärenden – Helpdesk</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f2f5fa;
+            color: #243247;
+        }
+
+        header {
+            background: #194c78;
+            color: white;
+            padding: 28px;
+            text-align: center;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 18px #00000012;
+        }
+
+        h2 {
+            color: #194c78;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 14px;
+            border-bottom: 1px solid #e0e6ed;
+            text-align: left;
+        }
+
+        th {
+            background: #e7eff7;
+            color: #194c78;
+        }
+
+        a {
+            color: #194c78;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .ticket-link {
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 20px;
+            background: #194c78;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+
+        .button:hover {
+            background: #123858;
+            text-decoration: none;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Helpdesk</h1>
+        <p>Digital hantering av supportärenden</p>
+    </header>
+
+    <main>
+
+        <h2>Supportärenden</h2>
+
+        <a class="button" th:href="@{/tickets/new}">
+            + Skapa nytt ärende
+        </a>
+
+        <p class="empty" th:if="${#lists.isEmpty(tickets)}">
+            Det finns inga supportärenden att visa.
+        </p>
+
+        <div class="table-wrapper"
+             th:unless="${#lists.isEmpty(tickets)}">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Rubrik</th>
+                        <th>Status</th>
+                        <th>Prioritet</th>
+                        <th>Skapad</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr th:each="ticket : ${tickets}">
+
+                        <td th:text="${ticket.id}"></td>
+
+                        <td>
+                            <a class="ticket-link"
+                               th:href="@{/tickets/{id}(id=${ticket.id})}"
+                               th:text="${ticket.title}">
+                                Visa ärende
+                            </a>
+                        </td>
+
+                        <td th:text="${ticket.status}"></td>
+
+                        <td th:text="${ticket.priority}"></td>
+
+                        <td th:text="${#temporals.format(ticket.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <a class="back-link" th:href="@{/}">
+            Tillbaka till startsidan
+        </a>
+
+    </main>
+
+</body>
+</html>

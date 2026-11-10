@@ -1,0 +1,223 @@
+
+<!DOCTYPE html>
+<html lang="sv" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Användaradministration – Helpdesk</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f1f5fb;
+            color: #173b5c;
+        }
+
+        header {
+            background: #194c78;
+            color: white;
+            text-align: center;
+            padding: 24px;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px #00000012;
+        }
+
+        h2, h3 { color: #194c78; }
+
+        label {
+            display: block;
+            margin: 12px 0 5px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background: #194c78;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover { background: #123653; }
+
+        form { margin: 0; }
+
+        .create-form {
+            max-width: 500px;
+            margin-bottom: 35px;
+        }
+
+        .create-form button { margin-top: 18px; }
+
+        .table-wrapper { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 750px;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #dce5ef;
+            text-align: left;
+        }
+
+        th { background: #e6eff8; }
+
+        td form {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        td select { min-width: 110px; }
+
+        .message {
+            padding: 12px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+
+        .success { background: #e7f5eb; color: #146c35; }
+        .error { background: #fdeaea; color: #9b2424; }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            color: #194c78;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Helpdesk</h1>
+    <p>Administration av användarkonton</p>
+</header>
+
+<main>
+    <h2>Användaradministration</h2>
+
+    <div class="message success"
+         th:if="${success}"
+         th:text="${success}"></div>
+
+    <div class="message error"
+         th:if="${error}"
+         th:text="${error}"></div>
+
+    <h3>Skapa ny användare</h3>
+
+    <form class="create-form"
+          th:action="@{/admin/users/create}"
+          method="post">
+
+        <label for="name">Namn</label>
+        <input id="name" name="name"
+               maxlength="100" required>
+
+        <label for="email">E-postadress</label>
+        <input id="email" name="email"
+               type="email" maxlength="254" required>
+
+        <label for="password">Lösenord</label>
+        <input id="password" name="password"
+               type="password" minlength="8" required>
+
+        <label for="role">Användarroll</label>
+        <select id="role" name="role" required>
+            <option th:each="role : ${roles}"
+                    th:value="${role}"
+                    th:text="${role}">
+            </option>
+        </select>
+
+        <button type="submit">Skapa användare</button>
+    </form>
+
+    <h3>Befintliga användare</h3>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Namn</th>
+                    <th>E-post</th>
+                    <th>Roll</th>
+                    <th>Status</th>
+                    <th>Ändra roll</th>
+                    <th>Aktivera/inaktivera</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.id}"></td>
+                    <td th:text="${user.name}"></td>
+                    <td th:text="${user.email}"></td>
+                    <td th:text="${user.role}"></td>
+
+                    <td th:text="${user.enabled ? 'Aktiv' : 'Inaktiv'}"></td>
+
+                    <td>
+                        <form th:action="@{/admin/users/{id}/role(id=${user.id})}"
+                              method="post">
+
+                            <select name="role">
+                                <option th:each="role : ${roles}"
+                                        th:value="${role}"
+                                        th:text="${role}"
+                                        th:selected="${role == user.role}">
+                                </option>
+                            </select>
+
+                            <button type="submit">Spara</button>
+                        </form>
+                    </td>
+
+                    <td>
+                        <form th:action="@{/admin/users/{id}/toggle(id=${user.id})}"
+                              method="post">
+
+                            <button type="submit"
+                                    th:text="${user.enabled ? 'Inaktivera' : 'Aktivera'}">
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(users)}">
+                    <td colspan="7">Inga användare hittades.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <a class="back-link" th:href="@{/tickets}">
+        Tillbaka till ärendelistan
+    </a>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,351 @@
+
+<!DOCTYPE html>
+<html lang="sv" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ärendedetaljer – Helpdesk</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f2f5fa;
+            color: #18344f;
+        }
+
+        header {
+            background: #194c78;
+            color: white;
+            text-align: center;
+            padding: 28px 20px;
+        }
+
+        header h1 {
+            margin: 0 0 12px;
+            font-size: 30px;
+        }
+
+        header p {
+            margin: 0;
+        }
+
+        main {
+            max-width: 780px;
+            margin: 40px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+        }
+
+        h2, h3 {
+            color: #194c78;
+        }
+
+        .detail {
+            padding: 14px 0;
+            border-bottom: 1px solid #dce5ef;
+        }
+
+        .detail strong {
+            display: block;
+            color: #194c78;
+            margin-bottom: 8px;
+        }
+
+        .detail span {
+            display: block;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        form {
+            margin-top: 12px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        select, textarea {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 15px;
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 12px 22px;
+            background: #194c78;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #123a5e;
+        }
+
+        .comments {
+            margin-top: 28px;
+        }
+
+        .comment {
+            padding: 15px 0;
+            border-bottom: 1px solid #dce5ef;
+        }
+
+        .comment strong {
+            color: #194c78;
+        }
+
+        .comment p {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .comment small {
+            color: #64748b;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            color: #194c78;
+        }
+
+        .empty-message {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        @media (max-width: 820px) {
+            main {
+                margin: 20px 12px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Helpdesk</h1>
+    <p>Digital hantering av supportärenden</p>
+</header>
+
+<main>
+
+    <h2>Ärendedetaljer</h2>
+
+    <div class="detail">
+        <strong>Ärende-ID</strong>
+        <span th:text="${ticket.id}"></span>
+    </div>
+
+    <div class="detail">
+        <strong>Rubrik</strong>
+        <span th:text="${ticket.title}"></span>
+    </div>
+
+    <div class="detail">
+        <strong>Beskrivning</strong>
+        <span th:text="${ticket.description}"></span>
+    </div>
+
+    <div class="detail">
+        <strong>Status</strong>
+        <span th:text="${ticket.status}"></span>
+    </div>
+
+    <div class="detail" th:if="${isAdmin}">
+        <strong>Ändra ärendestatus</strong>
+
+        <form th:action="@{/tickets/{id}/status(id=${ticket.id})}"
+              method="post">
+
+            <label for="status">Välj ny status</label>
+
+            <select id="status" name="status" required>
+                <option value="OPEN"
+                        th:selected="${ticket.status.name() == 'OPEN'}">
+                    Öppen
+                </option>
+                <option value="IN_PROGRESS"
+                        th:selected="${ticket.status.name() == 'IN_PROGRESS'}">
+                    Pågår
+                </option>
+                <option value="RESOLVED"
+                        th:selected="${ticket.status.name() == 'RESOLVED'}">
+                    Löst
+                </option>
+                <option value="CLOSED"
+                        th:selected="${ticket.status.name() == 'CLOSED'}">
+                    Stängd
+                </option>
+            </select>
+
+            <button type="submit">Spara status</button>
+        </form>
+    </div>
+
+    <div class="detail">
+        <strong>Prioritet</strong>
+        <span th:text="${ticket.priority}"></span>
+    </div>
+
+    <div class="detail" th:if="${isAdmin}">
+        <strong>Ändra ärendeprioritet</strong>
+
+        <form th:action="@{/tickets/{id}/priority(id=${ticket.id})}"
+              method="post">
+
+            <label for="priority">Välj ny prioritet</label>
+
+            <select id="priority" name="priority" required>
+                <option value="LOW"
+                        th:selected="${ticket.priority.name() == 'LOW'}">
+                    Låg
+                </option>
+                <option value="MEDIUM"
+                        th:selected="${ticket.priority.name() == 'MEDIUM'}">
+                    Medel
+                </option>
+                <option value="HIGH"
+                        th:selected="${ticket.priority.name() == 'HIGH'}">
+                    Hög
+                </option>
+            </select>
+
+            <button type="submit">Spara prioritet</button>
+        </form>
+    </div>
+
+    <div class="detail">
+        <strong>Tilldelad handläggare</strong>
+
+        <span th:if="${ticket.assignedTo != null}"
+              th:text="${ticket.assignedTo.name}"></span>
+
+        <span th:if="${ticket.assignedTo == null}">
+            Ärendet är ännu inte tilldelat.
+        </span>
+    </div>
+
+    <div class="detail" th:if="${isAdmin}">
+        <strong>Tilldela supportärende</strong>
+
+        <form th:action="@{/tickets/{id}/assign(id=${ticket.id})}"
+              method="post">
+
+            <label for="agentId">Välj supportmedarbetare</label>
+
+            <select id="agentId"
+                    name="agentId"
+                    required
+                    th:disabled="${#lists.isEmpty(agents)}">
+
+                <option value="" disabled
+                        th:selected="${ticket.assignedTo == null}">
+                    Välj en handläggare
+                </option>
+
+                <option th:each="agent : ${agents}"
+                        th:value="${agent.id}"
+                        th:text="${agent.name}"
+                        th:selected="${ticket.assignedTo != null and ticket.assignedTo.id == agent.id}">
+                </option>
+
+            </select>
+
+            <button type="submit"
+                    th:disabled="${#lists.isEmpty(agents)}">
+                Tilldela ärende
+            </button>
+        </form>
+
+        <p class="empty-message"
+           th:if="${#lists.isEmpty(agents)}">
+            Det finns inga aktiva supportmedarbetare att välja.
+        </p>
+    </div>
+
+    <div class="detail">
+        <strong>Skapad av</strong>
+        <span th:text="${ticket.createdBy.name}"></span>
+    </div>
+
+    <div class="detail">
+        <strong>Skapad</strong>
+        <span th:text="${#temporals.format(ticket.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+    </div>
+
+    <div class="detail">
+        <strong>Senast uppdaterad</strong>
+        <span th:text="${ticket.updatedAt != null ? #temporals.format(ticket.updatedAt, 'yyyy-MM-dd HH:mm') : '-'}"></span>
+    </div>
+
+    <section class="comments">
+
+        <h2>Kommentarer</h2>
+
+        <p th:if="${#lists.isEmpty(comments)}">
+            Det finns inga kommentarer ännu.
+        </p>
+
+        <div class="comment"
+             th:each="comment : ${comments}">
+
+            <strong th:text="${comment.author.name}"></strong>
+
+            <p th:text="${comment.content}"></p>
+
+            <small th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></small>
+        </div>
+
+        <h3>Skriv en kommentar</h3>
+
+        <form th:action="@{/tickets/{id}/comments(id=${ticket.id})}"
+              method="post">
+
+            <label for="content">Din kommentar</label>
+
+            <textarea id="content"
+                      name="content"
+                      rows="5"
+                      maxlength="5000"
+                      required></textarea>
+
+            <button type="submit">
+                Skicka kommentar
+            </button>
+
+        </form>
+
+    </section>
+
+    <a class="back-link" th:href="@{/tickets}">
+        Tillbaka till ärendelistan
+    </a>
+
+</main>
+
+</body>
+</html>

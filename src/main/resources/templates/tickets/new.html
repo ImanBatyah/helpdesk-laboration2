@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html lang="sv" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nytt supportärende – Helpdesk</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f2f5fa;
+            color: #243247;
+        }
+
+        header {
+            background: #194c78;
+            color: white;
+            padding: 28px;
+            text-align: center;
+        }
+
+        main {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 18px #00000012;
+        }
+
+        h2 {
+            color: #194c78;
+        }
+
+        label {
+            display: block;
+            margin: 20px 0 8px;
+            font-weight: bold;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #bbc9d8;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font: inherit;
+        }
+
+        textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+
+        button {
+            margin-top: 25px;
+            padding: 13px 25px;
+            background: #194c78;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        a {
+            color: #194c78;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Helpdesk</h1>
+        <p>Digital hantering av supportärenden</p>
+    </header>
+
+    <main>
+        <h2>Skapa nytt supportärende</h2>
+
+        <form th:action="@{/tickets}" th:object="${ticket}" method="post">
+
+            <label for="title">Rubrik</label>
+            <input type="text" id="title" th:field="*{title}"
+                   maxlength="200" required>
+
+            <label for="description">Beskrivning</label>
+            <textarea id="description" th:field="*{description}"
+                      required></textarea>
+
+            <label for="priority">Prioritet</label>
+            <select id="priority" th:field="*{priority}">
+                <option value="LOW">Låg</option>
+                <option value="MEDIUM">Medel</option>
+                <option value="HIGH">Hög</option>
+            </select>
+
+            <button type="submit">Skapa ärende</button>
+        </form>
+
+        <p><a th:href="@{/tickets}">Tillbaka till ärendelistan</a></p>
+    </main>
+</body>
+</html>
